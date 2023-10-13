@@ -1,8 +1,36 @@
 /* @refresh reload */
 import { render } from 'solid-js/web';
+import type { Component } from 'solid-js';
+import h from "solid-js/h";
 
-import './index.css';
-import App from './App';
+
+
+
+function App() {
+  return (
+    <div>
+      <header >
+
+        <p>
+          Edit <code>src/App.tsx</code> and save to reload 9.
+        </p>
+        <a
+          
+          href="https://github.com/solidjs/solid"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn Solid
+        </a>
+      </header>
+    </div>
+  );
+};
+
+
+
+
+
 
 const root = document.getElementById('root');
 
@@ -12,4 +40,4 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
   );
 }
 
-render(() => <App />, root!);
+render(h(App), root!);
