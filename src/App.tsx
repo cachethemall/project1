@@ -9,7 +9,7 @@ const App: Component = () => {
       <header class={styles.header}>
         <img src={logo} class={styles.logo} alt="logo" />
         <p>
-          Edit <code>src/App.tsx</code> and save to reload 1000.
+          Edit <code>src/App.tsx</code> and save to reload 9999.
         </p>
         <a
           class={styles.link}
