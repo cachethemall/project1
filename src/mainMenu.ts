@@ -1,18 +1,20 @@
-import { h, Component, render } from "preact";
-import { useState, useCallback, useRef, useEffect } from "preact/hooks";
-import { exampleApexCharts } from "./exampleCode";
+
+import { render } from 'solid-js/web';
+import h from "solid-js/h";
+import { createSignal } from "solid-js";
+import { exampleApexCharts, exampleLightWeightCharts } from "./exampleCode";
 
 export function EmptyDiv(): any {
   return h("div", null, "Empty");
 }
 
 export function mainMenu() {
-  const [chartElement2, chartElement2Set] = useState(
-    h(exampleApexCharts, null),
+  const [chartElement2, chartElement2Set] = createSignal(
+    h(EmptyDiv, null),
   );
   let chartLibs = {
     ApexCharts: exampleApexCharts,
-    "Lightweight Charts": () => null,
+    "Lightweight Charts": exampleLightWeightCharts,
     Empty: EmptyDiv,
   };
   return [
@@ -35,7 +37,9 @@ export function mainMenu() {
                   "a",
                   {
                     class: "nav-link",
-                    onClick: () => chartElement2Set(h(x[1], null)),
+                    onClick: (e) => {
+                        console.log('Set set');
+                        chartElement2Set(h(x[1], null));},
                   },
                   x[0],
                 ),
@@ -45,6 +49,6 @@ export function mainMenu() {
         ),
       ]),
     ),
-    chartElement2,
+    () => chartElement2(),
   ];
 }

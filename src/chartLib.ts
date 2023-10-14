@@ -1,16 +1,18 @@
 import { createChart } from "lightweight-charts";
-import { h, Component, render } from "preact";
-import { useState, useCallback, useRef, useEffect } from "preact/hooks";
+import h from "solid-js/h";
+import { render } from 'solid-js/web';
 
-let chartDataGlobal = null;
+import { createSignal, createEffect } from "solid-js";
+
+let chartDataGlobal: Array<any> = null!;
 
 function prepareChartDataGlobal(priceDataManyJsonStr) {
   chartDataGlobal = JSON.parse(priceDataManyJsonStr);
-  chartDataGlobal = chartDataGlobal.map((d) =>
+  chartDataGlobal = chartDataGlobal!.map((d) =>
     d.map((dd) => {
       dd.time += 25200;
       return dd;
-    }),
+    })
   );
 }
 
@@ -33,13 +35,12 @@ function timestampToDateString(timestamp) {
 }
 
 function TopLeftInfo(props) {
-  const bar = props.currentBar;
 
   return h(
     "div",
     { class: "z-1 position-absolute p-1" },
     h("dl", { class: "row" }, [
-      h("dt", { class: "col" }, bar?.symbol),
+      h("dt", { class: "col" }, () => props?.currentBar?.symbol),
       h("dd", { class: "col" }, ""),
       // h("dt", { class: "col" }, "T"),
       // h(
@@ -48,27 +49,28 @@ function TopLeftInfo(props) {
       //   bar?.time != null ? timestampToDateString(bar?.time) : null
       // ),
       h("dt", { class: "col" }, "O"),
-      h("dd", { class: "col" }, bar?.open),
+      h("dd", { class: "col" }, () => props?.currentBar?.open),
       h("dt", { class: "col" }, "H"),
-      h("dd", { class: "col" }, bar?.high),
+      h("dd", { class: "col" }, () => props?.currentBar?.high),
       h("dt", { class: "col" }, "L"),
-      h("dd", { class: "col" }, bar?.low),
+      h("dd", { class: "col" }, () => props?.currentBar?.low),
       h("dt", { class: "col" }, "C"),
-      h("dd", { class: "col" }, bar?.close),
+      h("dd", { class: "col" }, () => props?.currentBar?.close),
       h("dt", { class: "col" }, "V"),
-      h("dd", { class: "col" }, bar?.volume),
+      h("dd", { class: "col" }, () => props?.currentBar?.volume),
     ]),
   );
 }
 
-function ChartApp(props) {
+export function ChartApp(props) {
   //  const appContainerRef = useRef(null);
-  const chartContainerRef = useRef(null);
-  const [currentBar, currentBarSet] = useState(null);
-  const [mouseEventParamData, mouseEventParamDataSet] = useState(null);
+  let chartContainerRef;
+  const [currentBar, currentBarSet] = createSignal(null);
+  const [mouseEventParamData, mouseEventParamDataSet] = createSignal(null);
 
-  useEffect(() => {
-    const candleStickData = chartDataGlobal[0];
+  createEffect(() => {
+    console.log(props.chartData[0][0]);
+    const candleStickData = props.chartData[0];
     const chartOptions = {
       layout: {
         textColor: "#d1d4dc",
@@ -88,7 +90,7 @@ function ChartApp(props) {
       //},
     };
 
-    const chart = createChart(chartContainerRef.current, chartOptions);
+    const chart = createChart(chartContainerRef, chartOptions);
 
     const volumeSeries = chart.addHistogramSeries({
       priceFormat: {
@@ -173,13 +175,13 @@ function ChartApp(props) {
       { class: "row" },
       h("div", { class: "col" }, [
         h(TopLeftInfo, {
-          currentBar,
-          mouseEventParamData,
+          currentBar: () => currentBar(),
+          mouseEventParamData: () => mouseEventParamData(),
         }),
         h("div", {
           id: "chartContainer",
           class: "z-0 position-absolute",
-          ref: chartContainerRef,
+          ref: (el) => chartContainerRef = el,
         }),
       ]),
     ),
